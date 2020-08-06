@@ -98,7 +98,11 @@ class ViewController: UITableViewController {
     
     func isPossible(word: String) -> Bool {
         guard var tempWord = title?.lowercased() else {return false}
+            //compare the start word with the tempWord, if they are the same, return false
         
+        if ((word.elementsEqual(tempWord)) == true) {
+            return false
+        }
         for letter in word {
             if let position = tempWord.firstIndex(of: letter) {
                 tempWord.remove(at: position)
@@ -117,8 +121,12 @@ class ViewController: UITableViewController {
         let checker = UITextChecker()
         let range = NSRange(location: 0, length: word.utf16.count)
         let misspelledRange = checker.rangeOfMisspelledWord(in: word, range: range, startingAt: 0, wrap: false, language: "en")
-        
+        //Check if the word is over three letters
+        if(word.count < 3){
+            return false
+        } else {
         return misspelledRange.location == NSNotFound
+        }
     }
 }
 
