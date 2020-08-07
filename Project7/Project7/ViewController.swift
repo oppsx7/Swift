@@ -16,14 +16,16 @@ class ViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Credits", style: .plain, target: self, action: #selector(showDataSource))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Filter", style: .plain, target: self, action: #selector(filter))
+        
         performSelector(inBackground: #selector(fetchJSON), with: nil)
         
     }
     
     @objc func fetchJSON() {
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Credits", style: .plain, target: self, action: #selector(showDataSource))
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Filter", style: .plain, target: self, action: #selector(filter))
+        
         
         
         if navigationController?.tabBarItem.tag == 0 {
@@ -53,17 +55,18 @@ class ViewController: UITableViewController {
     
     @objc func filter() {
         
-        let ac = UIAlertController(title: "Enter a name to filter", message: nil, preferredStyle: .alert)
-        ac.addTextField()
-        
-        let submitAction = UIAlertAction(title: "Show", style: .default) {
-            [weak self, weak ac] action in
-            guard let filter = ac?.textFields?[0].text else { return }
-            self?.submit(filter)
-        }
-        ac.addAction(submitAction)
-        present(ac, animated: true)
-        
+       
+            let ac = UIAlertController(title: "Enter a name to filter", message: nil, preferredStyle: .alert)
+            ac.addTextField()
+            
+            let submitAction = UIAlertAction(title: "Show", style: .default) {
+                [weak self, weak ac] action in
+                guard let filter = ac?.textFields?[0].text else { return }
+                self?.submit(filter)
+            }
+            ac.addAction(submitAction)
+            present(ac, animated: true)
+ 
         
     }
     
