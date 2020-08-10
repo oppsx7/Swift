@@ -23,7 +23,7 @@ UINavigationControllerDelegate{
         
         return people.count
     }
-    
+
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Person", for: indexPath) as? PersonCell else { fatalError("Unable to dequeue PersonCell.") }
         
@@ -73,7 +73,20 @@ UINavigationControllerDelegate{
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let person = people[indexPath.item]
         
-        let ac = UIAlertController(title: "Rename person", message: nil, preferredStyle: .alert)
+        let ac = UIAlertController(title: "Rename/Delete person", message: nil, preferredStyle: .alert)
+        
+        ac.addAction(UIAlertAction(title: "Rename", style: .default, handler: { action in self.rename(action:action, person: person)
+            
+        }))
+        ac.addAction(UIAlertAction(title: "Delete", style: .default, handler: { action in
+            self.deletePerson(action: action, person: person,indexPath: indexPath)
+        }))
+             present(ac, animated: true)
+        }
+    
+    @objc func rename(action: UIAlertAction, person: Person) {
+        let ac = UIAlertController(title: "Enter a new name", message: nil, preferredStyle: .alert)
+        
         ac.addTextField()
          
         ac.addAction(UIAlertAction(title: "OK", style: .default) {
@@ -85,8 +98,21 @@ UINavigationControllerDelegate{
         
         ac.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         present(ac, animated: true)
-             
-        }
+    
+    }
+    
+    @objc func deletePerson(action: UIAlertAction, person: Person,indexPath: IndexPath) {
+        
+        people.remove(at: indexPath.item)
+        self.collectionView.deleteItems(at: [indexPath])
+        collectionView.reloadData()
+        
+        let ac = UIAlertController(title: "Successfully deleted", message: nil, preferredStyle: .alert)
+        
+        ac.addAction(UIAlertAction(title: "OK", style: .default))
+        present(ac, animated: true)
+        
+    }
     }
 
 
