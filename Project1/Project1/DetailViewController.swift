@@ -10,7 +10,7 @@ import UIKit
 
 class DetailViewController: UIViewController {
     @IBOutlet var imageView: UIImageView!
-    
+    var pictures = [String: Int]()
     var selectedImage: String?
     var rowNumber: Int = 0
     var currentRow: Int = 0
@@ -21,10 +21,16 @@ class DetailViewController: UIViewController {
         
         title = "Picture \(currentRow) of \(rowNumber)"
         navigationItem.largeTitleDisplayMode = .never
+        
 
         if let imageToLoad = selectedImage {
+            
             imageView.image = UIImage(named: imageToLoad)
+            
+            navigationItem.prompt = "Image clicked: \(pictures[imageToLoad] ?? 0) times"
+            
         }
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -36,6 +42,8 @@ class DetailViewController: UIViewController {
         super.viewWillDisappear(animated)
         navigationController?.hidesBarsOnTap = false
     }
+    
+}
 
     /*
     // MARK: - Navigation
@@ -47,4 +55,4 @@ class DetailViewController: UIViewController {
     }
     */
 
-}
+

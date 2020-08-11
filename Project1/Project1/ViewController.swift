@@ -11,6 +11,7 @@ import UIKit
 class ViewController: UITableViewController {
     
     var pictures = [String]()
+    var picturesClick = [String: Int]()
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -19,7 +20,16 @@ class ViewController: UITableViewController {
         
         performSelector(inBackground: #selector(loadFiles), with: nil)
         
-        
+        let defaults = UserDefaults.standard
+        if let savedPeople = defaults.object(forKey: "picturesClick") as? Data {
+            let jsonDecoder = JSONDecoder()
+            
+            do {
+                picturesClick = try jsonDecoder.decode([String: Int].self, from: savedPeople)
+            } catch {
+                print("failed to load people.")
+            }
+        }
         print(pictures)
     }
     
@@ -34,6 +44,10 @@ class ViewController: UITableViewController {
                     //this is a picture to load !
                 pictures.append(item)
             }
+        }
+        
+        for picture in pictures {
+            picturesClick[picture] = 0
         }
     }
 
@@ -54,9 +68,24 @@ class ViewController: UITableViewController {
             vc.selectedImage = pictures[indexPath.row]
             vc.rowNumber = pictures.count
             vc.currentRow = indexPath.row + 1
+            picturesClick[pictures[indexPath.row]]! += 1
+            save()
+            vc.pictures[pictures[indexPath.row]] = picturesClick[pictures[indexPath.row]]
             
             navigationController?.pushViewController(vc, animated: true)
         }
     }
-}
+    
+    func save() {
+        let jsonEncoder = JSONEncoder()
+            
+            if let savedData = try? jsonEncoder.encode(picturesClick) {
+                let defaults = UserDefaults.standard
+                defaults.set(savedData, forKey: "picturesClick")
+            } else {
+                print("Failed to save picture.")
+            }
+        }
+    }
+
 
