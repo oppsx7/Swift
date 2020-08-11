@@ -11,6 +11,7 @@ import SpriteKit
 class GameScene: SKScene {
     var slots = [WhackSlot]()
     var gameScore: SKLabelNode!
+    var gameOverLabel: SKLabelNode!
     
     var popupTime = 0.85
     var numRounds = 0
@@ -27,6 +28,8 @@ class GameScene: SKScene {
         background.blendMode = .replace
         background.zPosition = -1
         addChild(background)
+        
+        
         
         gameScore = SKLabelNode(fontNamed: "Chalkduster")
         gameScore.text = "Score: 0"
@@ -84,7 +87,7 @@ class GameScene: SKScene {
     func createEnemy() {
         numRounds += 1
         
-        if numRounds >= 30 {
+        if numRounds >= 5 {
             for slot in slots {
                 slot.hide()
             }
@@ -93,6 +96,14 @@ class GameScene: SKScene {
             gameOver.position = CGPoint(x: 512, y: 384)
             gameOver.zPosition = 1
             addChild(gameOver)
+            
+            gameOverLabel = SKLabelNode(fontNamed: "Chalkduster")
+            gameOverLabel.text = "Score: \(score)"
+            gameOverLabel.position = CGPoint(x: 412, y: 284)
+            gameOverLabel.horizontalAlignmentMode = .left
+            gameOverLabel.fontSize = 48
+            addChild(gameOverLabel)
+            
             return
         }
         popupTime *= 0.991
@@ -100,10 +111,13 @@ class GameScene: SKScene {
         slots.shuffle()
         slots[0].show(hideTime: popupTime)
         
+        
         if Int.random(in: 0...12) > 4 { slots[1].show(hideTime: popupTime)}
         if Int.random(in: 0...12) > 8 { slots[2].show(hideTime: popupTime)}
         if Int.random(in: 0...12) > 10 { slots[3].show(hideTime: popupTime)}
         if Int.random(in: 0...12) > 11 { slots[4].show(hideTime: popupTime)}
+            
+       
         
 
         
