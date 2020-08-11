@@ -87,7 +87,7 @@ class GameScene: SKScene {
     func createEnemy() {
         numRounds += 1
         
-        if numRounds >= 5 {
+        if numRounds >= 30 {
             for slot in slots {
                 slot.hide()
             }
@@ -116,10 +116,16 @@ class GameScene: SKScene {
         if Int.random(in: 0...12) > 8 { slots[2].show(hideTime: popupTime)}
         if Int.random(in: 0...12) > 10 { slots[3].show(hideTime: popupTime)}
         if Int.random(in: 0...12) > 11 { slots[4].show(hideTime: popupTime)}
-            
-       
+        let minDelay = popupTime / 2.0
+        let maxDelay = popupTime * 2
+        let delay = Double.random(in: minDelay...maxDelay)
         
-
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+            self?.createEnemy()
+        }
+        
+        
+        
         
     }
 }
