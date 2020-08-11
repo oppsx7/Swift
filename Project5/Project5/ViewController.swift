@@ -12,6 +12,7 @@ class ViewController: UITableViewController {
 
     var allWords = [String]()
     var usedWords = [String]()
+    var wordsDictionary = [String: [String]]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,12 +29,24 @@ class ViewController: UITableViewController {
             allWords = ["silkworm"]
         }
         
+        let defaults = UserDefaults.standard
+        if let savedPeople = defaults.object(forKey: "wordsDictionary") as? Data {
+            let jsonDecoder = JSONDecoder()
+            
+            do {
+                wordsDictionary = try jsonDecoder.decode([String: [String]].self, from: savedPeople)
+            } catch {
+                print("Failed to load people")
+            }
+        }
+        
         startGame()
     }
     
     func startGame() {
         title = allWords.randomElement()
         usedWords.removeAll(keepingCapacity: true)
+        usedWords = wordsDictionary[title!] ?? [""]
         tableView.reloadData()
     }
     
@@ -68,6 +81,8 @@ class ViewController: UITableViewController {
             if isOriginal(word: lowerAnswer){
                 if isReal(word: lowerAnswer) {
                     usedWords.insert(answer, at: 0)
+                    wordsDictionary[lowerAnswer]?.append(answer)
+                    save()
                     
                     let indexPath = IndexPath(row: 0, section: 0)
                     tableView.insertRows(at: [indexPath], with: .automatic)
@@ -130,6 +145,17 @@ class ViewController: UITableViewController {
     
     @objc func restart() {
         startGame()
+    }
+    
+    func save() {
+        let jsonEncoder = JSONEncoder()
+        
+        if let savedData = try? jsonEncoder.encode(wordsDictionary) {
+            let defaults = UserDefaults.standard
+            defaults.set(savedData, forKey: "wordsDictionary")
+        } else {
+            print("failed to save people")
+        }
     }
 }
 

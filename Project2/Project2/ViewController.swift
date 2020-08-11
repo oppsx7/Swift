@@ -17,6 +17,7 @@ class ViewController: UIViewController {
     var score = 0
     var correctAnswer = 0
     var questionAsked = 0
+    var highestScore = 0
     
     
     
@@ -59,6 +60,12 @@ class ViewController: UIViewController {
         if sender.tag == correctAnswer {
             title = "Correct"
             score += 1
+            if score > highestScore {
+                highestScore = score
+                let ac = UIAlertController(title: "You beat your highest score!", message: nil, preferredStyle: .alert)
+                ac.addAction(UIAlertAction(title: "Awesome!", style: .default, handler: askQuestion))
+                present(ac, animated: true)
+            }
         } else {
             title = "Wrong"
             score -= 1
@@ -83,7 +90,7 @@ class ViewController: UIViewController {
     }
     
     @objc func showScore() {
-        let ac = UIAlertController(title: "Your score is: ", message: "\(score)", preferredStyle: .alert)
+        let ac = UIAlertController(title: nil, message: "Your score is: \(score)\n Your highest score is \(highestScore)", preferredStyle: .alert)
         ac.addAction(UIAlertAction(title: "Hide", style: .cancel))
         
         present(ac, animated: true)
