@@ -57,6 +57,14 @@ class ViewController: UIViewController {
     
     @IBAction func buttonTapped(_ sender: UIButton) {
         var title: String
+        
+        UIView.animate(withDuration: 1, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 5, options: [], animations: {
+            sender.imageView?.transform = CGAffineTransform(scaleX: 2, y: 2)
+            
+        }) { finished in
+            sender.isHidden = false
+        }
+        
         if sender.tag == correctAnswer {
             title = "Correct"
             score += 1
