@@ -23,13 +23,7 @@ class ViewController: UITableViewController, WKNavigationDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
-        
         print(websites)
-        
-        
-       
-        
 
     }
     
