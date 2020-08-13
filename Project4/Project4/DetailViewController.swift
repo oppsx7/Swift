@@ -30,12 +30,15 @@ class DetailViewController: UIViewController, WKNavigationDelegate {
         
         let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         
+        let tempButton = UIBarButtonItem(title: "button", style: .plain, target: self, action: nil)
+        
         progressView = UIProgressView(progressViewStyle: .default)
         progressView.sizeToFit()
         let progressButton = UIBarButtonItem(customView: progressView)
         
         items.append(progressButton)
         items.append(spacer)
+        items.append(tempButton)
         self.toolbarItems = items
         navigationController?.isToolbarHidden = false
         
