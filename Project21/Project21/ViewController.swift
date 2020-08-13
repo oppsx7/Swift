@@ -10,13 +10,13 @@ import UserNotifications
 import UIKit
 
 class ViewController: UIViewController, UNUserNotificationCenterDelegate {
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Register", style: .plain, target: self, action: #selector(registerLocal))
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Schedule", style: .plain, target: self, action: #selector(scheduleLocal))
     }
-
+    
     @objc func registerLocal() {
         let center = UNUserNotificationCenter.current()
         
@@ -42,10 +42,16 @@ class ViewController: UIViewController, UNUserNotificationCenterDelegate {
         content.userInfo = ["customData": "fizzbuzz"]
         content.sound = .default
         
+        let anotherContent = UNMutableNotificationContent()
+        anotherContent.title = "Remind me later"
+        anotherContent.categoryIdentifier = "alarm"
+        anotherContent.userInfo = ["customData": "fizzbuzz"]
+        anotherContent.sound = .default
+        
         var dateComponents = DateComponents()
         dateComponents.hour = 10
         dateComponents.minute = 30
-//        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
+        //        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
         
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
@@ -72,6 +78,9 @@ class ViewController: UIViewController, UNUserNotificationCenterDelegate {
             case UNNotificationDefaultActionIdentifier:
                 print("Default identifier")
             case "show":
+                let ac = UIAlertController(title: "Showing information", message: nil , preferredStyle: .alert)
+                ac.addAction(UIAlertAction(title: "Close", style: .cancel))
+                present(ac, animated: true)
                 print("Show more information...")
             default:
                 break
@@ -79,5 +88,6 @@ class ViewController: UIViewController, UNUserNotificationCenterDelegate {
             completionHandler()
         }
     }
+    
 }
 
