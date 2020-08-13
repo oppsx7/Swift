@@ -1,38 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Bucket
-   uuid = "C1870089-48B5-4A6D-8CF5-B6D4927EBAA9"
+   uuid = "04395D9C-82D2-4109-80AC-81C9506F53C1"
    type = "1"
    version = "2.0">
    <Breakpoints>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "CEC78AD3-3F5B-4C30-95BE-D8A50F9CABF5"
+            uuid = "2A4BF706-156E-43E4-9EDF-4D59C484E80C"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Extention/ActionViewController.swift"
+            filePath = "Project20/GameViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "47"
-            endingLineNumber = "47"
-            landmarkName = "done()"
+            startingLineNumber = "51"
+            endingLineNumber = "51"
+            landmarkName = "motionBegan(_:with:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "FB5FA351-98AC-4389-BBA5-2741033E5A31"
+            uuid = "912DE8EF-C3D7-48D0-82B6-662F1B51C60C"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Extention/ActionViewController.swift"
+            filePath = "Project20/GameScene.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "51"
-            endingLineNumber = "51"
-            landmarkName = "done()"
+            startingLineNumber = "91"
+            endingLineNumber = "91"
+            landmarkName = "lauchFireWorks()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
