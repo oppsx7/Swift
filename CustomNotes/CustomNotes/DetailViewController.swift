@@ -19,13 +19,19 @@ class DetailViewController: UIViewController {
         super.viewDidLoad()
         title = noteName
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareTapped))
-        var items = [UIBarButtonItem]()
-        
-        let doneButton = UIBarButtonItem(title: "done", style: .plain, target: self, action: #selector(done))
-        items.append(doneButton)
-        self.toolbarItems = items
-        self.navigationController?.toolbar.tintColor = UIColor.systemPink
+
+        self.script.addDoneButton(title: "Done", target: self, selector: #selector(tapDone))
         navigationController?.isToolbarHidden = false
+        
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard))
+        
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+        
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
+        
+        notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillChangeFrameNotification, object: self)
         
         let defaults = UserDefaults.standard
         if let savedNotes = defaults.object(forKey: "notesInformation") as? Data {
@@ -44,9 +50,11 @@ class DetailViewController: UIViewController {
         
     }
     
-    @objc func done() {
+    
+    @objc func tapDone(sender: Any) {
         notesInformation[noteName] = script.text ?? ""
         save()
+        self.view.endEditing(true)
     }
     
     func save() {
@@ -70,6 +78,36 @@ class DetailViewController: UIViewController {
         vc.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
         present(vc, animated: true)
     }
+    
+    @objc func adjustForKeyboard(notification: Notification) {
+        guard let keyboardValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+        
+        let keyboardScreenEndFrame = keyboardValue.cgRectValue
+        let keyboardViewEndFrame = view.convert(keyboardScreenEndFrame, from: view.window)
+        
+        if notification.name == UIResponder.keyboardWillChangeFrameNotification {
+            script.contentInset = .zero
+        } else {
+            script.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardViewEndFrame.height - view.safeAreaInsets.bottom, right: 0)
+        }
+        
+        script.scrollIndicatorInsets = script.contentInset
+        
+        let selectedRange = script.selectedRange
+        script.scrollRangeToVisible(selectedRange)
+    }
+    
+    @objc func dismissKeyboard() {
+        //Causes the view (or one of its embedded text fields) to resign the first responder status.
+        view.endEditing(true)
+    }
+    
+    func textFieldSouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        
+        return true
+    }
+
     
     
 
