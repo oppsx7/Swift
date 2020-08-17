@@ -78,5 +78,66 @@ attributedString.addAttribute(.font, value:UIFont.systemFont(ofSize: 24), range:
 attributedString.addAttribute(.font, value:UIFont.systemFont(ofSize: 32), range: NSRange(location: 10, length: 4))
 attributedString.addAttribute(.font, value:UIFont.systemFont(ofSize: 40), range: NSRange(location: 15, length: 6))
 
+extension String {
+    func withPrefix(prefix: String) -> String {
+        if self.hasPrefix(prefix){
+            return self
+        } else {
+            var prefixedString = ""
+            prefixedString.append(contentsOf: prefix)
+            prefixedString.append(contentsOf: self)
+            
+            return prefixedString
+        }
+        
+    }
+}
+var pet = "pet"
+
+pet.withPrefix(prefix: "car")
+
+extension String {
+    
+    func isNumeric() -> Bool{
+        if Double(self) != nil {
+            return true
+        } else {
+            return false
+        }
+        
+    }
+    
+}
+
+var num = "42.5"
+pet.isNumeric()
+num.isNumeric()
 
 
+extension String {
+    func lines() -> [String] {
+      
+        var curr = ""
+        var array = [String]()
+        var counter = 0
+        var countIterations = 0
+        for letter in self {
+            
+            countIterations += 1
+            if letter == "\\" {
+                counter = countIterations
+            } else if letter == "n" && countIterations == (counter + 1) {
+                array.append(curr)
+                curr.removeAll()
+            } else {
+                curr.append(letter)
+            }
+           
+        }
+    
+        return array
+    }
+}
+
+var test = "this\nis\na\ntest"
+test.lines()
