@@ -25,31 +25,54 @@ class ViewController: UIViewController {
     }
     
     @IBAction func authenticateTapped(_ sender: Any) {
-        let context = LAContext()
-        var error: NSError?
+        let ac = UIAlertController(title: "Register/LogIn", message: nil, preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "Register", style: .default, handler: register))
+        ac.addAction(UIAlertAction(title: "LogIn", style: .default, handler: logIn))
+        present(ac, animated: true)
         
-        if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
-            let reason = "Identify yourself!"
-            
-            context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) {
-                [weak self] success, authenticationError in
-                DispatchQueue.main.async {
-                    if success {
-                        self?.unlockSecretMessage()
-                    } else {
-                        let ac = UIAlertController(title: "Authentication failed", message: "You could not be verified, please try again", preferredStyle: .alert)
-                        ac.addAction(UIAlertAction(title: "OK", style: .default))
-                        self?.present(ac, animated: true)
-                    }
-                }
-            }
-        } else {
-            let ac = UIAlertController(title: "Biometry Unavailable", message: "your device is not configured for biometric authentication", preferredStyle: .alert)
-            ac.addAction(UIAlertAction(title: "OK", style: .default))
-            present(ac ,animated: true)
-        }
+        
+        
+        
     }
     
+    @objc func register(_ sender: UIAlertAction) {
+        let ac = UIAlertController(title: "Enter a username and a password", message: nil, preferredStyle: .alert)
+        ac.addTextField()
+        ac.addTextField()
+        ac.addAction(UIAlertAction(title: "Continue", style: .default) {
+            [weak self, weak ac] action in
+            guard let userName = ac?.textFields?[0].text else { return }
+            guard let password = ac?.textFields?[1].text else { return }
+            self?.registerUser(userName: userName, password: password)
+        })
+        ac.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        present(ac, animated: true)
+        
+    }
+    
+    @objc func registerUser(userName: String, password: String) {
+        KeychainWrapper.standard.set(password, forKey: userName)
+        unlockSecretMessage(userName: userName)
+        
+    }
+    
+    @objc func logIn(_ sender: UIAlertAction) {
+        
+        let ac = UIAlertController(title: "Enter a username", message: nil, preferredStyle: .alert)
+        ac.addTextField()
+        ac.addAction(UIAlertAction(title: "Password", style: .default) {
+            [weak self, weak ac] action in
+            guard let userName = ac?.textFields?[0].text else { return }
+            self?.unlockWithPassword(userName: userName)
+        })
+        ac.addAction(UIAlertAction(title: "FaceID", style: .default) {
+            [weak self, weak ac] action in
+            guard let userName = ac?.textFields?[0].text else { return }
+            self?.unlockWithBiometric(userName: userName)
+        })
+        present(ac, animated: true)
+        
+    }
     @objc func adjustForKeyboard(notification: Notification) {
         guard let keyboardValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
         
@@ -68,17 +91,60 @@ class ViewController: UIViewController {
         secret.scrollRangeToVisible(selectedRange)
     }
     
+    func unlockWithPassword(userName: String) {
+        let ac = UIAlertController(title: "Enter a password", message: nil, preferredStyle: .alert)
+        ac.addTextField()
+        ac.addAction(UIAlertAction(title: "Submit", style: .default) {
+            [weak self, weak ac] action in
+            guard let password = ac?.textFields?[0].text else { return }
+            if KeychainWrapper.standard.string(forKey: userName) == password{
+                self?.unlockSecretMessage(userName: userName)
+            } else {
+                let tempAC = UIAlertController(title: "Wrong username or password",message: nil, preferredStyle: .alert)
+                tempAC.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+                self?.present(tempAC, animated: true)
+            }
+        })
+        present(ac, animated: true)
+        
+    }
     
-    func unlockSecretMessage() {
+    func unlockWithBiometric(userName: String) {
+        let context = LAContext()
+        var error: NSError?
+        
+        if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
+            let reason = "Identify yourself!"
+            
+            context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) {
+                [weak self] success, authenticationError in
+                DispatchQueue.main.async {
+                    if success {
+                        self?.unlockSecretMessage(userName: userName)
+                    } else {
+                        let ac = UIAlertController(title: "Authentication failed", message: "You could not be verified, please try again", preferredStyle: .alert)
+                        ac.addAction(UIAlertAction(title: "OK", style: .default))
+                        self?.present(ac, animated: true)
+                    }
+                }
+            }
+        } else {
+            let ac = UIAlertController(title: "Biometry Unavailable", message: "your device is not configured for biometric authentication", preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "OK", style: .default))
+            present(ac ,animated: true)
+        }
+    }
+    
+    func unlockSecretMessage(userName: String) {
         secret.isHidden = false
         title = "Secret stuff!"
-        secret.text = KeychainWrapper.standard.string(forKey: "SecretMessage") ?? ""
+        secret.text = KeychainWrapper.standard.string(forKey: userName) ?? ""
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(saveSecretMessage))
         
         
     }
     
-    @ objc func saveSecretMessage() {
+    @objc func saveSecretMessage() {
         guard secret.isHidden == false else { return }
         
         KeychainWrapper.standard.set(secret.text, forKey: "SecretMessage")
