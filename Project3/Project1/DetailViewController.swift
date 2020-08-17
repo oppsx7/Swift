@@ -45,7 +45,7 @@ class DetailViewController: UIViewController {
             print("No image found")
             return
         }
-        let vc = UIActivityViewController(activityItems: [image, selectedImage!], applicationActivities: [])
+        let vc = UIActivityViewController(activityItems: [image,"From Storm Viewer \(selectedImage!)"], applicationActivities: [])
         vc.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
         present(vc, animated: true)
     }
