@@ -15,9 +15,24 @@ enum CollisionTypes: UInt32 {
 }
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
+    var scoreLabelPlayer1: SKLabelNode!
+    var scoreLabelPlayer2: SKLabelNode!
+    var gameOver: SKLabelNode!
+    var isGameEnded = false
     var buildings = [BuildingNode]()
     weak var viewController: GameViewController?
     
+    var score1 = 0 {
+        didSet {
+            scoreLabelPlayer1.text = "Score: \(score1)"
+        }
+    }
+    
+    var score2 = 0 {
+        didSet {
+            scoreLabelPlayer2.text = "Score: \(score2)"
+        }
+    }
     var player1: SKSpriteNode!
     var player2: SKSpriteNode!
     var banana: SKSpriteNode!
@@ -29,6 +44,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         createBuildings()
         createPlayers()
+        
+        scoreLabelPlayer1 = SKLabelNode(fontNamed: "Chalkduster")
+        createScore(scoreLabelPlayer1)
+        scoreLabelPlayer1.position = CGPoint(x: 8, y: 8)
+        scoreLabelPlayer1.horizontalAlignmentMode = .left
+        
+        scoreLabelPlayer2 = SKLabelNode(fontNamed: "Chalkduster")
+        createScore(scoreLabelPlayer2)
+        scoreLabelPlayer2.position = CGPoint(x: 1000, y: 8)
+        scoreLabelPlayer2.horizontalAlignmentMode = .right
+        
+        generateGameOverLabel()
+        
         
         physicsWorld.contactDelegate = self
        
@@ -93,7 +121,36 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let impulse = CGVector(dx: cos(radians) * -speed, dy: sin(radians) * speed)
             banana.physicsBody?.applyImpulse(impulse)
         }
+        
     }
+    
+    func generateGameOverLabel() {
+        gameOver = SKLabelNode(fontNamed: "Chalkduster")
+        gameOver.text = "Game Over"
+        gameOver.fontSize = 120
+        gameOver.position = CGPoint(x: 500, y: 300)
+        gameOver.zPosition = 2
+        gameOver.isHidden  = true
+        addChild(gameOver)
+        print("gameOverLoaded")
+    }
+    
+    func endGame() {
+     guard isGameEnded == false else { return }
+     
+     isGameEnded = true
+     physicsWorld.speed = 0
+     isUserInteractionEnabled = false
+      
+    }
+    func createScore(_ label: SKLabelNode) {
+        
+        label.text = "Score: 0"
+        label.fontSize = 48
+        label.zPosition = 2
+        addChild(label)
+    }
+    
     
     func createPlayers() {
         player1 = SKSpriteNode(imageNamed: "player")
@@ -158,9 +215,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             explosion.position = player.position
             addChild(explosion)
         }
+        if player.name == "player2" {
+            score1 += 1
+        } else if player.name == "player1" {
+            score2 += 1
+        }
         
+        if score1 == 3 || score2 == 3 {
+            gameOver.isHidden = false
+            endGame()
+        }
         player.removeFromParent()
         banana.removeFromParent()
+        
+        
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             let newGame = GameScene(size: self.size)
