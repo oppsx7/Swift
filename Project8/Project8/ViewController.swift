@@ -194,6 +194,8 @@ class ViewController: UIViewController {
         }
         
         activatedButtons.removeAll()
+        
+     
     }
     
     @objc func levelUp(action: UIAlertAction) {
